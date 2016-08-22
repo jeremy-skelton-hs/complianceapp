@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trustworthy Jeremy's Premium Compliance App</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $(".approvalButton").click(function(e){
+        //Create a sketchy JSON object by using header names as keys and column data as values. 
+        var obj = {}
+        var $rowValues = $(this).closest("tr").find("td")
+        $.each($rowValues, function() {
+            var $key = $(this).closest('table').find('th').eq($(this).index()).text();
+            var $val = $(this).text();
+            obj[$key] = $val
+        });
+        delete obj["approve"] //remove button data 
+        this.id == "approveButton" ? obj["approved"] = true : obj["approved"] = false
+
+        //Postback
+        $.ajax({type: "POST",
+                url: "/approve",
+                data: JSON.stringify(obj),
+                contentType: 'application/json', 
+                success:function(result){
+                  console.log("Successful /approve")
+                },
+                error:function(result){
+                  console.log("Failed to /approve")
+
+                }
+        });
+      });
+    }); 
+  </script>
+</head>
+<body>
+<h1>Trustworthy Jeremy's Premium Compliance App</h1>
+<div class="messages">
+  <table>
+  <tr id="tableHeader">
+   <th>timestamp</th>
+   <th>state</th>
+   <th>organizationId</th>
+   <th>messageId</th>
+   <th>text</th>
+   <th>approve</th>
+  </tr>
+  <% for(var i=0; i<messages.length; i++) {%>
+    <tr class="message">
+      <td class="timestamp"><%= messages[i].data.timestamp  %></td>
+      <td class="state"><%= messages[i].data.state  %></td>
+      <td class="orgId"><%= messages[i].data.organization.id  %></td>
+      <td class="messageId"><%= messages[i].data.message.id  %></td>
+      <td class="messageText"><%= messages[i].text  %></td>
+      <td>  
+      	<button type="submit" id="approveButton" class="approvalButton">Yay</button>	
+      	<button type="submit" id="rejectButton" class="approvalButton">Nay</button>	
+      </td>
+  <% } %>
+</table>
+</body>
+</html>

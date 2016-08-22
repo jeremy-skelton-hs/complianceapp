@@ -1,0 +1,4 @@
+Test Compliance API app
+
+To Install: ```npm install``
+To Run: ```npm run dev``
